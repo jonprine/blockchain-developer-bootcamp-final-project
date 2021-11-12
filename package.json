@@ -18,5 +18,6 @@
   "bugs": {
     "url": "https://github.com/jonprine/blockchain-developer-bootcamp-final-project/issues"
   },
-  "homepage": "https://github.com/jonprine/blockchain-developer-bootcamp-final-project#readme"
+  "homepage": "https://github.com/jonprine/blockchain-developer-bootcamp-final-project#readme",
+  "devDependencies": {}
 }
