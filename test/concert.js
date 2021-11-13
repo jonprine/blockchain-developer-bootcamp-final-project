@@ -85,32 +85,64 @@ contract("Concert", (accounts) => {
       });
       const offerInfo = await instance.getAllOffers();
       console.log(offerInfo);
-
-    })
+   })
   })
 
-  describe('Approve offer', () => {
+  describe("Approve offer", () => {
     let currentPurchaser;
     let currentArtist;
-    let artistGuarantee;
+    let artistGuarantee, depositDueDate, currentGuarantee, contractBalance;
     beforeEach(async () => {
       await instance.createParties(accounts[0], accounts[1]);
       currentPurchaser = accounts[0];
       currentArtist = accounts[1];
-    });
-    it('artist should be able to approve offer', async () => {
-      artistGuarantee = 500;
-      await instance.sendMoney({ from: currentPurchaser, value: 1000 });
+      artistGuarantee = web3.utils.toWei("0.01", "ether");
+      depositDueDate = helpers.getEpochTime(300);
+      await instance.createOffer(artistGuarantee, depositDueDate, {
+        from: currentPurchaser,
+      });
       const offerInfo = await instance.getAllOffers();
+      console.log(offerInfo);
+    });
+    it("artist should not be able to approve offer", async () => {
+      await instance.sendMoney({
+        from: currentPurchaser,
+        value: web3.utils.toWei("0.002", "ether"),
+      });
+      const offerInfo = await instance.getAllOffers();
+      console.log(offerInfo);
       const acceptedOffer = offerInfo[0];
+      currentGuarantee = acceptedOffer.guarantee;
+      console.log(currentGuarantee);
+      contractBalance = parseInt(await web3.eth.getBalance(instance.address));
+      console.log(contractBalance);
       try {
-        acceptedOffer >= artistGuarantee
-        assert.equal(result.toString(), acceptedOffer);
+        assert.isBelow(currentGuarantee, contractBalance, `${currentGuarantee} is below the ${contractBalance}`);
       } catch (e) {
-        console.log(`${acceptedOffer} not higher than ${artistGuarantee}`);
+        console.log(
+          `${currentGuarantee} is higher than ${contractBalance}`
+        );
       }
-    })
-  })
+    });
+    it("artist should be able to approve offer", async () => {
+      await instance.sendMoney({
+        from: currentPurchaser,
+        value: web3.utils.toWei("0.1", "ether"),
+      });
+      const offerInfo = await instance.getAllOffers();
+      console.log(offerInfo);
+      const acceptedOffer = offerInfo[0];
+      currentGuarantee = acceptedOffer.guarantee;
+      console.log(currentGuarantee);
+      contractBalance = parseInt(await web3.eth.getBalance(instance.address));
+      console.log(contractBalance);
+      if (artistGuarantee <= contractBalance) {
+        console.log(`${currentGuarantee} is below the ${contractBalance}`)
+      } else {
+        console.log(`${currentGuarantee} is above the ${contractBalance}`)
+      };
+    });
+  });
 });
 
 
