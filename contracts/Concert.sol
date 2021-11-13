@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 
 pragma solidity 0.8.0;
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
-contract Concert {
+contract Concert is ReentrancyGuard {
     struct Event {
     string date;
     string billing;
@@ -111,7 +112,7 @@ contract Concert {
     }
   
   
-  function approveOffer(uint _index) public onlyArist {
+  function approveOffer(uint _index) public onlyArist nonReentrant() {
       Offer storage offer = offers[_index];
       require(address(this).balance >= offer.guarantee, 'Not enough money');
       offer.confirmed = true;
@@ -127,7 +128,7 @@ contract Concert {
  
   }
   
-  function receiveFullGuarantee(uint _index) public onlyArist {
+  function receiveFullGuarantee(uint _index) public onlyArist nonReentrant() {
       Offer storage offer = offers[_index];
       require(block.timestamp >= offer.dueDate);
       (bool success, ) = artist.call{value:offer.guarantee}('');

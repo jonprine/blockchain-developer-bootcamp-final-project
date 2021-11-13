@@ -19,5 +19,8 @@
     "url": "https://github.com/jonprine/blockchain-developer-bootcamp-final-project/issues"
   },
   "homepage": "https://github.com/jonprine/blockchain-developer-bootcamp-final-project#readme",
-  "devDependencies": {}
+  "devDependencies": {},
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.3"
+  }
 }
