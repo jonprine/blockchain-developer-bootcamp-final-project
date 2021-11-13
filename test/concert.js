@@ -26,10 +26,14 @@ contract("Concert", (accounts) => {
   });
 
   describe("Create a new event", () => {
-    it("should not create a new event if not purchaser", async () => {
+    let currentPurchaser;
+    let currentArtist;
+    beforeEach(async () => {
       await instance.createParties(accounts[0], accounts[1]);
-      const currentPurchaser = accounts[0];
-      const currentArtist = accounts[1];
+      currentPurchaser = accounts[0];
+      currentArtist = accounts[1];
+    });
+    it("should not create a new event if not purchaser", async () => {
       try {
         let result = await instance.createEvent.call({ from: currentArtist });
         assert.equal(result.toString(), currentArtist);
@@ -39,8 +43,6 @@ contract("Concert", (accounts) => {
     });
 
     it("should properly create event with purchaser", async () => {
-      await instance.createParties(accounts[0], accounts[1]);
-      const currentPurchaser = accounts[0];
       await instance.createEvent("date", "billing", "city", "venue", {
         from: currentPurchaser,
       });
@@ -50,9 +52,14 @@ contract("Concert", (accounts) => {
   });
 
   describe("Send money to contract", () => {
-    it("should deposit", async () => {
+    let currentPurchaser;
+    let currentArtist;
+    beforeEach(async () => {
       await instance.createParties(accounts[0], accounts[1]);
-      const currentPurchaser = accounts[0];
+      currentPurchaser = accounts[0];
+      currentArtist = accounts[1];
+    });
+    it("should deposit", async () => {
       await instance.sendMoney({ from: currentPurchaser, value: 1000 });
       const contractBalance = parseInt(
         await web3.eth.getBalance(instance.address)
@@ -62,12 +69,17 @@ contract("Concert", (accounts) => {
   });
 
   describe('Create a new offer', () => {
+    let currentPurchaser;
+    let currentArtist;
     let artistGuarantee, depositDueDate;
+    beforeEach(async () => {
+      await instance.createParties(accounts[0], accounts[1]);
+      currentPurchaser = accounts[0];
+      currentArtist = accounts[1];
+    });
     it('purchaser should be able to create a new offer', async () => {
       artistGuarantee = web3.utils.toWei('0.01', 'ether');
       depositDueDate = helpers.getEpochTime(300);
-      await instance.createParties(accounts[0], accounts[1]);
-      const currentPurchaser = accounts[0];
       await instance.createOffer(artistGuarantee, depositDueDate, {
         from: currentPurchaser,
       });
@@ -78,11 +90,15 @@ contract("Concert", (accounts) => {
   })
 
   describe('Approve offer', () => {
+    let currentPurchaser;
+    let currentArtist;
     let artistGuarantee;
-    it('artist should be able to approve offer', async () => {
+    beforeEach(async () => {
       await instance.createParties(accounts[0], accounts[1]);
-      const currentPurchaser = accounts[0];
-      const currentArtist = accounts[1];
+      currentPurchaser = accounts[0];
+      currentArtist = accounts[1];
+    });
+    it('artist should be able to approve offer', async () => {
       artistGuarantee = 500;
       await instance.sendMoney({ from: currentPurchaser, value: 1000 });
       const offerInfo = await instance.getAllOffers();
