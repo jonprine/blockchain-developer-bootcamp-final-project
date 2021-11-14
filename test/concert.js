@@ -43,11 +43,16 @@ contract("Concert", (accounts) => {
     });
 
     it("should properly create event with purchaser", async () => {
-      await instance.createEvent("date", "billing", "city", "venue", {
+      await instance.createEvent('March 22, 2022', 'Futurebirds', 'Nashville, TN', 'Ryman', {
         from: currentPurchaser,
       });
       const eventInfo = await instance.readEvent();
       console.log(eventInfo);
+
+      assert.equal(eventInfo.date, 'March 22, 2022', 'date was not stored');
+      assert.equal(eventInfo.billing, 'Futurebirds', 'billing was not stored');
+      assert.equal(eventInfo.city, 'Nashville, TN', 'city was not stored');
+      assert.equal(eventInfo.venue, 'Ryman', 'venue was not stored');
     });
   });
 
@@ -84,7 +89,22 @@ contract("Concert", (accounts) => {
         from: currentPurchaser,
       });
       const offerInfo = await instance.getAllOffers();
-      console.log(offerInfo);
+   })
+   it('offer data should store correctly', async () => {
+    artistGuarantee = web3.utils.toWei('0.01', 'ether');
+    depositDueDate = helpers.getEpochTime(300);
+    await instance.createOffer(artistGuarantee, depositDueDate, {
+      from: currentPurchaser,
+    });
+    const offerInfo = await instance.getAllOffers();
+    currentOfferInfo = offerInfo[0];
+    console.log(currentOfferInfo);
+    assert.equal(currentOfferInfo.guarantee, 10000000000000000, 'guarantee was not stored');
+    assert.equal(currentOfferInfo.deposit, 5000000000000000, 'deposit was not stored');
+    assert.equal(currentOfferInfo.confirmed, false, 'confirmed status was not stored');
+    assert.equal(currentOfferInfo.depositPaid, false, 'deposit status was not stored');
+    // assert.equal(currentOfferInfo.dueDate, 1636853317, 'final payment due date was not stored');
+    assert.equal(currentOfferInfo.guaranteePaid, false, 'full payment status was not stored');
    })
   })
 
