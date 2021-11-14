@@ -197,6 +197,16 @@ contract("Concert", (accounts) => {
       } else {
         console.log(`show cannot settle until ${currentApprovedOffer.dueDate}`)
       }
+      settlement = await instance.getAllOffers();
+      let finalSettlment = settlement[0];
+      console.log(finalSettlment);
+
+      assert.equal(finalSettlment.guarantee, 0, 'guarantee was not updated');
+      assert.equal(finalSettlment.deposit, 0, 'deposit was not updated');
+      assert.equal(finalSettlment.confirmed, true, 'confirmed status was not updated');
+      assert.equal(finalSettlment.depositPaid, true, 'deposit status was not updated');
+      assert.equal(finalSettlment.dueDate, 1636853317, 'final payment due date was not stored');
+      assert.equal(finalSettlment.guaranteePaid, true, 'full payment status was not stored');
 
     });
   });
