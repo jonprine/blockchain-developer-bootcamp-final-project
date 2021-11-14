@@ -144,7 +144,7 @@ contract("Concert", (accounts) => {
         );
       }
     });
-    it("artist should be able to approve offer", async () => {
+    it("artist should be able to approve offer if enough eth in contract", async () => {
       await instance.sendMoney({
         from: currentPurchaser,
         value: web3.utils.toWei("0.1", "ether"),
@@ -161,6 +161,32 @@ contract("Concert", (accounts) => {
       } else {
         console.log(`${currentGuarantee} is above the ${contractBalance}`)
       };
+    });
+    it('artist confirms offer. updates current state of offer', async () => {
+      await instance.sendMoney({
+        from: currentPurchaser,
+        value: web3.utils.toWei("0.1", "ether"),
+      });
+      const offerInfo = await instance.getAllOffers();
+      const acceptedOffer = offerInfo[0];
+      currentGuarantee = acceptedOffer.guarantee;
+      contractBalance = parseInt(await web3.eth.getBalance(instance.address));
+      await instance.approveOffer(0, {
+        from: currentArtist,
+      });
+      if (artistGuarantee <= contractBalance) {
+        const approvedOffer = await instance.getAllOffers();
+        currentApprovedOffer = approvedOffer[0];
+        console.log(currentApprovedOffer);
+      } else {
+        console.log(`${currentGuarantee} is above the ${contractBalance}`)
+      };
+      assert.equal(currentApprovedOffer.guarantee, 5000000000000000, 'guarantee was not stored');
+      assert.equal(currentApprovedOffer.deposit, 0, 'deposit was not stored');
+      assert.equal(currentApprovedOffer.confirmed, true, 'confirmed status was not stored');
+      assert.equal(currentApprovedOffer.depositPaid, true, 'deposit status was not stored');
+      // assert.equal(currentApprovedOffer.dueDate, 1636853317, 'final payment due date was not stored');
+      assert.equal(currentApprovedOffer.guaranteePaid, false, 'full payment status was not stored');
     });
   });
 });
