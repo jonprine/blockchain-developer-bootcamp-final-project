@@ -37,6 +37,8 @@ contract Concert is ReentrancyGuard {
   event PartiesCreated(address purchaser, address artist);
   event EventCreated(string date, string billing, string city, string venue);
   event OfferCreated(uint guarantee, uint deposit, bool confirmed, bool depositPaid, uint dueDate, bool guaranteePaid);
+  event OfferApproved(uint guarantee, uint deposit, bool confirmed, bool depositPaid, uint dueDate, bool guaranteePaid);
+  event ShowSettled(uint guarantee, uint deposit, bool confirmed, bool depositPaid, uint dueDate, bool guaranteePaid);
   
   
   Offer[] public offers;
@@ -125,6 +127,7 @@ contract Concert is ReentrancyGuard {
     offer.deposit -= offer.deposit;
     offer.depositPaid = true;
      
+    emit OfferCreated(offer.guarantee, offer.deposit, offer.confirmed, offer.depositPaid, offer.dueDate, offer.guaranteePaid);
  
   }
   
@@ -136,6 +139,8 @@ contract Concert is ReentrancyGuard {
         offer.guarantee -= offer.guarantee;
         offer.guaranteePaid = true;
         finalpayment = true;
+
+        emit ShowSettled(offer.guarantee, offer.deposit, offer.confirmed, offer.depositPaid, offer.dueDate, offer.guaranteePaid);
       
   }
   
