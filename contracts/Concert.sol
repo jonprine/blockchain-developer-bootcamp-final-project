@@ -46,7 +46,7 @@ contract Concert is ReentrancyGuard {
     _;
     }
     
-       modifier onlyArist() {
+       modifier onlyArtist() {
         require(msg.sender == artist, "Only Artist!");
     _;
     }
@@ -112,7 +112,7 @@ contract Concert is ReentrancyGuard {
     }
   
   
-  function approveOffer(uint _index) public onlyArist nonReentrant() {
+  function approveOffer(uint _index) public onlyArtist nonReentrant() {
       Offer storage offer = offers[_index];
       require(address(this).balance >= offer.guarantee, 'Not enough money');
       offer.confirmed = true;
@@ -128,7 +128,7 @@ contract Concert is ReentrancyGuard {
  
   }
   
-  function receiveFullGuarantee(uint _index) public onlyArist nonReentrant() {
+  function receiveFullGuarantee(uint _index) public onlyArtist nonReentrant() {
       Offer storage offer = offers[_index];
       require(block.timestamp >= offer.dueDate);
       (bool success, ) = artist.call{value:offer.guarantee}('');

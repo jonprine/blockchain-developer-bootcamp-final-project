@@ -5,6 +5,8 @@ contract("Concert", (accounts) => {
   const [purchaser, artist] = accounts;
 
   let instance;
+  let dueDate;
+  let now = new Date().toISOString();
 
   beforeEach(async () => {
     instance = await Concert.new();
@@ -76,34 +78,33 @@ contract("Concert", (accounts) => {
   describe('Create a new offer', () => {
     let currentPurchaser;
     let currentArtist;
-    let artistGuarantee, depositDueDate;
+    let artistGuarantee, dueDate;
     beforeEach(async () => {
       await instance.createParties(accounts[0], accounts[1]);
       currentPurchaser = accounts[0];
       currentArtist = accounts[1];
+      dueDate = 1636853317;
     });
     it('purchaser should be able to create a new offer', async () => {
       artistGuarantee = web3.utils.toWei('0.01', 'ether');
-      depositDueDate = helpers.getEpochTime(300);
-      await instance.createOffer(artistGuarantee, depositDueDate, {
+      await instance.createOffer(artistGuarantee, dueDate, {
         from: currentPurchaser,
       });
-      const offerInfo = await instance.getAllOffers();
+      let offerInfo = await instance.getAllOffers();
    })
    it('offer data should store correctly', async () => {
     artistGuarantee = web3.utils.toWei('0.01', 'ether');
-    depositDueDate = helpers.getEpochTime(300);
-    await instance.createOffer(artistGuarantee, depositDueDate, {
+    await instance.createOffer(artistGuarantee, dueDate, {
       from: currentPurchaser,
     });
-    const offerInfo = await instance.getAllOffers();
+    offerInfo = await instance.getAllOffers();
     currentOfferInfo = offerInfo[0];
     console.log(currentOfferInfo);
     assert.equal(currentOfferInfo.guarantee, 10000000000000000, 'guarantee was not stored');
     assert.equal(currentOfferInfo.deposit, 5000000000000000, 'deposit was not stored');
     assert.equal(currentOfferInfo.confirmed, false, 'confirmed status was not stored');
     assert.equal(currentOfferInfo.depositPaid, false, 'deposit status was not stored');
-    // assert.equal(currentOfferInfo.dueDate, 1636853317, 'final payment due date was not stored');
+    assert.equal(currentOfferInfo.dueDate, 1636853317, 'final payment due date was not stored');
     assert.equal(currentOfferInfo.guaranteePaid, false, 'full payment status was not stored');
    })
   })
@@ -111,17 +112,17 @@ contract("Concert", (accounts) => {
   describe("Approve offer", () => {
     let currentPurchaser;
     let currentArtist;
-    let artistGuarantee, depositDueDate, currentGuarantee, contractBalance;
+    let artistGuarantee, currentGuarantee, contractBalance, currentApprovedOffer;
     beforeEach(async () => {
       await instance.createParties(accounts[0], accounts[1]);
       currentPurchaser = accounts[0];
       currentArtist = accounts[1];
       artistGuarantee = web3.utils.toWei("0.01", "ether");
-      depositDueDate = helpers.getEpochTime(300);
-      await instance.createOffer(artistGuarantee, depositDueDate, {
+      dueDate = 1636853317;
+      await instance.createOffer(artistGuarantee, dueDate, {
         from: currentPurchaser,
       });
-      const offerInfo = await instance.getAllOffers();
+      offerInfo = await instance.getAllOffers();
       console.log(offerInfo);
     });
     it("artist should not be able to approve offer", async () => {
@@ -129,7 +130,7 @@ contract("Concert", (accounts) => {
         from: currentPurchaser,
         value: web3.utils.toWei("0.002", "ether"),
       });
-      const offerInfo = await instance.getAllOffers();
+      offerInfo = await instance.getAllOffers();
       console.log(offerInfo);
       const acceptedOffer = offerInfo[0];
       currentGuarantee = acceptedOffer.guarantee;
@@ -149,7 +150,7 @@ contract("Concert", (accounts) => {
         from: currentPurchaser,
         value: web3.utils.toWei("0.1", "ether"),
       });
-      const offerInfo = await instance.getAllOffers();
+      offerInfo = await instance.getAllOffers();
       console.log(offerInfo);
       const acceptedOffer = offerInfo[0];
       currentGuarantee = acceptedOffer.guarantee;
@@ -167,26 +168,36 @@ contract("Concert", (accounts) => {
         from: currentPurchaser,
         value: web3.utils.toWei("0.1", "ether"),
       });
-      const offerInfo = await instance.getAllOffers();
-      const acceptedOffer = offerInfo[0];
+      offerInfo = await instance.getAllOffers();
+      let acceptedOffer = offerInfo[0];
       currentGuarantee = acceptedOffer.guarantee;
       contractBalance = parseInt(await web3.eth.getBalance(instance.address));
       await instance.approveOffer(0, {
         from: currentArtist,
       });
       if (artistGuarantee <= contractBalance) {
-        const approvedOffer = await instance.getAllOffers();
+        let approvedOffer = await instance.getAllOffers();
         currentApprovedOffer = approvedOffer[0];
         console.log(currentApprovedOffer);
       } else {
         console.log(`${currentGuarantee} is above the ${contractBalance}`)
       };
-      assert.equal(currentApprovedOffer.guarantee, 5000000000000000, 'guarantee was not stored');
-      assert.equal(currentApprovedOffer.deposit, 0, 'deposit was not stored');
-      assert.equal(currentApprovedOffer.confirmed, true, 'confirmed status was not stored');
-      assert.equal(currentApprovedOffer.depositPaid, true, 'deposit status was not stored');
-      // assert.equal(currentApprovedOffer.dueDate, 1636853317, 'final payment due date was not stored');
+      assert.equal(currentApprovedOffer.guarantee, 5000000000000000, 'guarantee was not updated');
+      assert.equal(currentApprovedOffer.deposit, 0, 'deposit was not updated');
+      assert.equal(currentApprovedOffer.confirmed, true, 'confirmed status was not updated');
+      assert.equal(currentApprovedOffer.depositPaid, true, 'deposit status was not updated');
+      assert.equal(currentApprovedOffer.dueDate, 1636853317, 'final payment due date was not stored');
       assert.equal(currentApprovedOffer.guaranteePaid, false, 'full payment status was not stored');
+
+      await instance.receiveFullGuarantee(0, { from: currentArtist,});
+      currentApprovedOffer = await instance.getAllOffers();
+      if (now >= currentApprovedOffer.dueDate) {
+        let settlement = currentApprovedOffer[0];
+        console.log(settlement);
+      } else {
+        console.log(`show cannot settle until ${currentApprovedOffer.dueDate}`)
+      }
+
     });
   });
 });
