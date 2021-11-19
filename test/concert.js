@@ -49,12 +49,12 @@ contract("Concert", (accounts) => {
         from: currentPurchaser,
       });
       const eventInfo = await instance.readEvent();
-      console.log(eventInfo);
-
-      assert.equal(eventInfo.date, 'March 22, 2022', 'date was not stored');
-      assert.equal(eventInfo.billing, 'Futurebirds', 'billing was not stored');
-      assert.equal(eventInfo.city, 'Nashville, TN', 'city was not stored');
-      assert.equal(eventInfo.venue, 'Ryman', 'venue was not stored');
+      const currentEvent = eventInfo[0];
+      console.log(currentEvent);
+      assert.equal(currentEvent.date, 'March 22, 2022', 'date was not stored');
+      assert.equal(currentEvent.billing, 'Futurebirds', 'billing was not stored');
+      assert.equal(currentEvent.city, 'Nashville, TN', 'city was not stored');
+      assert.equal(currentEvent.venue, 'Ryman', 'venue was not stored');
     });
   });
 
@@ -90,7 +90,6 @@ contract("Concert", (accounts) => {
       await instance.createOffer(artistGuarantee, dueDate, {
         from: currentPurchaser,
       });
-      let offerInfo = await instance.getAllOffers();
    })
    it('offer data should store correctly', async () => {
     artistGuarantee = web3.utils.toWei('0.01', 'ether');

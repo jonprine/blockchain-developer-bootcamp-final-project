@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
 contract Concert is ReentrancyGuard {
-    struct Event {
+    struct Show {
     string date;
     string billing;
     string city;
@@ -13,7 +13,7 @@ contract Concert is ReentrancyGuard {
 
   }
   
-  Event myEvent;
+  Show[] public shows;
   
   struct Offer {
     uint guarantee;
@@ -63,25 +63,22 @@ contract Concert is ReentrancyGuard {
     public
     onlyPurchaser
      {
-        myEvent.date = _date;
-        myEvent.billing = _billing;
-        myEvent.city = _city;
-        myEvent.venue = _venue;
+      Show memory show = Show({
+        date: _date,
+        billing: _billing,
+        city: _city,
+        venue: _venue
+    });
+    shows.push(show);
         
         emit EventCreated(_date, _billing, _city, _venue);
         
     }
     
-        function readEvent()
-        public view
-        returns(string memory date, string memory billing, string memory venue, string memory city)
-    {
-        date = myEvent.date;
-        billing = myEvent.billing;
-        venue = myEvent.venue;
-        city = myEvent.city;
+    function readEvent() public view returns (Show[] memory) {
+        return shows;
     }
-
+    
   function createOffer(uint _guarantee, uint _dueDate) 
     public
     onlyPurchaser
