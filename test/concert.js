@@ -78,7 +78,7 @@ contract("Concert", (accounts) => {
   describe('Create a new offer', () => {
     let currentPurchaser;
     let currentArtist;
-    let artistGuarantee, dueDate;
+    let artistGuarantee, deposit, dueDate;
     beforeEach(async () => {
       await instance.createParties(accounts[0], accounts[1]);
       currentPurchaser = accounts[0];
@@ -87,38 +87,38 @@ contract("Concert", (accounts) => {
     });
     it('purchaser should be able to create a new offer', async () => {
       artistGuarantee = web3.utils.toWei('0.01', 'ether');
-      await instance.createOffer(artistGuarantee, dueDate, {
+      deposit = web3.utils.toWei('0.001', 'ether');
+      await instance.createOffer(artistGuarantee, deposit, dueDate, {
         from: currentPurchaser,
       });
    })
    it('offer data should store correctly', async () => {
     artistGuarantee = web3.utils.toWei('0.01', 'ether');
-    await instance.createOffer(artistGuarantee, dueDate, {
+    deposit = web3.utils.toWei('0.001', 'ether');
+    await instance.createOffer(artistGuarantee, deposit, dueDate, {
       from: currentPurchaser,
     });
     offerInfo = await instance.getAllOffers();
     currentOfferInfo = offerInfo[0];
     console.log(currentOfferInfo);
     assert.equal(currentOfferInfo.guarantee, 10000000000000000, 'guarantee was not stored');
-    assert.equal(currentOfferInfo.deposit, 5000000000000000, 'deposit was not stored');
-    assert.equal(currentOfferInfo.confirmed, false, 'confirmed status was not stored');
-    assert.equal(currentOfferInfo.depositPaid, false, 'deposit status was not stored');
+    assert.equal(currentOfferInfo.deposit, 1000000000000000, 'deposit was not stored');
     assert.equal(currentOfferInfo.dueDate, 1636853317, 'final payment due date was not stored');
-    assert.equal(currentOfferInfo.guaranteePaid, false, 'full payment status was not stored');
    })
   })
 
   describe("Approve offer", () => {
     let currentPurchaser;
     let currentArtist;
-    let artistGuarantee, currentGuarantee, contractBalance, currentApprovedOffer;
+    let artistGuarantee, deposit, currentGuarantee, contractBalance, currentApprovedOffer;
     beforeEach(async () => {
       await instance.createParties(accounts[0], accounts[1]);
       currentPurchaser = accounts[0];
       currentArtist = accounts[1];
       artistGuarantee = web3.utils.toWei("0.01", "ether");
+      deposit = web3.utils.toWei('0.001', 'ether');
       dueDate = 1636853317;
-      await instance.createOffer(artistGuarantee, dueDate, {
+      await instance.createOffer(artistGuarantee, deposit, dueDate, {
         from: currentPurchaser,
       });
       offerInfo = await instance.getAllOffers();
@@ -181,12 +181,9 @@ contract("Concert", (accounts) => {
       } else {
         console.log(`${currentGuarantee} is above the ${contractBalance}`)
       };
-      assert.equal(currentApprovedOffer.guarantee, 5000000000000000, 'guarantee was not updated');
+      assert.equal(currentApprovedOffer.guarantee, 9000000000000000, 'guarantee was not updated');
       assert.equal(currentApprovedOffer.deposit, 0, 'deposit was not updated');
-      assert.equal(currentApprovedOffer.confirmed, true, 'confirmed status was not updated');
-      assert.equal(currentApprovedOffer.depositPaid, true, 'deposit status was not updated');
       assert.equal(currentApprovedOffer.dueDate, 1636853317, 'final payment due date was not stored');
-      assert.equal(currentApprovedOffer.guaranteePaid, false, 'full payment status was not stored');
 
       await instance.receiveFullGuarantee(0, { from: currentArtist,});
       currentApprovedOffer = await instance.getAllOffers();
@@ -202,10 +199,7 @@ contract("Concert", (accounts) => {
 
       assert.equal(finalSettlment.guarantee, 0, 'guarantee was not updated');
       assert.equal(finalSettlment.deposit, 0, 'deposit was not updated');
-      assert.equal(finalSettlment.confirmed, true, 'confirmed status was not updated');
-      assert.equal(finalSettlment.depositPaid, true, 'deposit status was not updated');
       assert.equal(finalSettlment.dueDate, 1636853317, 'final payment due date was not stored');
-      assert.equal(finalSettlment.guaranteePaid, true, 'full payment status was not stored');
 
     });
   });
