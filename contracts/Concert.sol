@@ -82,6 +82,15 @@ contract Concert is ReentrancyGuard {
     function getAllOffers() public view returns (Offer[] memory) {
         return offers;
     }
+
+        function getSingleOffer(uint id) view public returns(uint, uint, uint, uint) {
+        for(uint i = 0; i < offers.length; i++) {
+            if(offers[i].id == id) {
+             return(offers[i].id, offers[i].guarantee, offers[i].deposit, offers[i].dueDate); 
+                    
+                }
+            }
+        }
   
   
   function approveOffer(uint _index) public  {
