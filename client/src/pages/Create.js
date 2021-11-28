@@ -131,7 +131,7 @@ export default function Create() {
         if (sendMoney) {
          await concert.methods
             .sendMoney()
-            .send({ from: accounts[0], gas: 3000000, value: web3.utils.toWei('1', 'ether') })
+            .send({ from: accounts[0], gas: 3000000, value: sendMoney })
             .then(() => history.go(0));
             
             
@@ -159,7 +159,7 @@ export default function Create() {
       <form noValidate autoComplete="off" onSubmit={sendMoneySubmit}>
         <TextField className={classes.field}
           onChange={(e) => setSendMoney(e.target.value)}
-          label="Send Money" 
+          label="Send Money(wei)" 
           variant="outlined" 
           color="secondary" 
           required
