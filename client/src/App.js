@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Offers from "./pages/Offers";
 import Create from "./pages/Create";
 import Main from "./pages/Main";
+import Landing from "./pages/Landing";
 import Layout from "./components/Layout";
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
 
   useEffect(() => {
     const init = async () => {
-      const web3 = getWeb3();
+      const web3 = await getWeb3();
       const accounts = await web3.eth.getAccounts();
       const concert = await getConcert(web3);
       setWeb3(web3);
@@ -21,6 +22,9 @@ function App() {
       setConcert(concert);
     };
     init();
+    window.ethereum.on('accountsChanged', accounts => {
+      setAccounts(accounts);
+    });
   }, []);
 
   if (
@@ -37,6 +41,9 @@ function App() {
         <Switch>
           <Route exact path="/">
             <Main />
+          </Route>
+          <Route path="/landing">
+            <Landing />
           </Route>
           <Route path="/offers">
             <Offers />

@@ -7,11 +7,12 @@ export default function OfferCard({ offer, handleApprove }) {
     <div>
       <Card elevation={1} >
         <CardContent>
-          <Typography variant="h7" color="primary.main">
+          <Typography variant="h6" color="primary.main">
             Offer
           </Typography>
-        <Typography variant="h6" color="textSecondary">
+        <Typography variant="h7" color="textSecondary">
             Guarantee: { offer.guarantee } wei
+            Deposit: {offer.deposit} wei
           </Typography>
          
          

@@ -32,8 +32,6 @@ export default function Create() {
   const [billing, setBilling] = useState('');
   const [city, setCity] = useState('');
   const [venue, setVenue] = useState('');
-  const [purchaser, setPurchaser] = useState('');
-  const [artist, setArtist] = useState('');
   const [guarantee, setGuarantee] = useState('');
   const [deposit, setDeposit] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -42,8 +40,6 @@ export default function Create() {
   const [billingError, setBillingError] = useState(false);
   const [cityError, setCityError] = useState(false);
   const [venueError, setVenueError] = useState(false);
-  const [purchaserError, setPurchaserError] = useState(false);
-  const [artistError, setArtistError] = useState(false);
   const [guaranteeError, setGuaranteeError] = useState(false);
   const [depositError, setDepositError] = useState(false);
   const [dueDateError, setDueDateError] = useState(false);
@@ -54,14 +50,18 @@ export default function Create() {
 
   useEffect(() => {
     const init = async () => {
-      const web3 = getWeb3();
+      const web3 = await getWeb3();
       const accounts = await web3.eth.getAccounts();
       const concert = await getConcert(web3);
       setWeb3(web3);
       setAccounts(accounts);
       setConcert(concert);
+    
     };
     init();
+    window.ethereum.on('accountsChanged', accounts => {
+      setAccounts(accounts);
+    });
   }, []);
  
   if(
@@ -78,6 +78,9 @@ export default function Create() {
         setBillingError(false)
         setCityError(false)
         setVenueError(false)
+        setGuaranteeError(false)
+        setDepositError(false)
+        setDueDateError(false)
         
     
         if (date === '') {
@@ -92,20 +95,6 @@ export default function Create() {
         if (venue === '') {
             setVenueError(true)
         }
-        if (date && billing && city && venue) {
-        await concert.methods
-          .createEvent(date, billing, city, venue)
-          .send({from: accounts[0], gas:3000000})
-        } 
-        
-      }
-
-      async function offerSubmit(e) {
-        e.preventDefault()
-        setGuaranteeError(false)
-        setDepositError(false)
-        setDueDateError(false)
-    
         if (guarantee === '') {
           setGuaranteeError(true)
         }
@@ -115,41 +104,22 @@ export default function Create() {
         if (dueDate === '') {
           setDueDateError(true)
         }
-        if (guarantee && deposit && dueDate) {
-          
-          
-        web3.utils.toBN(guarantee);
-        web3.utils.toBN(deposit);
-  
-        
-           
-          
+        if (date && billing && city && venue && guarantee && deposit && dueDate) {
+
+          web3.utils.toBN(guarantee);
+          web3.utils.toBN(deposit);
+
+          await concert.methods
+          .createEvent(date, billing, city, venue)
+          .send({ from: accounts[0], gas: 3000000 });
           await concert.methods
           .createOffer(guarantee.toString(), deposit.toString(), dueDate)
-          .send({from: accounts[0], gas:300000})
-          .then(() => history.push('/offers'));
+          .send({ from: accounts[0], gas: 3000000 })
+          .then(() => history.push("/offers"));
         } 
+        
       }
 
-      async function partiesSubmit(e) {
-        e.preventDefault()
-        setPurchaserError(false)
-        setArtistError(false)
-    
-        if (purchaser === '') {
-          setPurchaserError(true)
-        }
-        if (artist === '') {
-          setArtistError(true)
-        }
-        if (purchaser && artist) {
-         await concert.methods
-            .createParties(purchaser, artist)
-            .send({from:accounts[0]})
-            console.log(purchaser);
-            console.log(artist);
-        } 
-      }
 
       async function sendMoneySubmit(e) {
         e.preventDefault()
@@ -161,7 +131,8 @@ export default function Create() {
         if (sendMoney) {
          await concert.methods
             .sendMoney()
-            .send({ from: accounts[0], gas: 3000000, value: web3.utils.toWei('3', 'ether') })
+            .send({ from: accounts[0], gas: 3000000, value: web3.utils.toWei('1', 'ether') })
+            
             
         } 
       }
@@ -183,6 +154,7 @@ export default function Create() {
       </Typography>
 
       <form noValidate autoComplete="off" onSubmit={eventSubmit}>
+        <div>
         <TextField className={classes.field}
           onChange={(e) => setDate(e.target.value)}
           label="Date" 
@@ -215,80 +187,12 @@ export default function Create() {
           required
           error={venueError}
         />
-
-      <Button
-        className={classes.btn}
-        onClick={() => console.log('you clicked me')}
-        type="submit" 
-        color="primary" 
-        variant="contained"
-        
-        
-        endIcon={<KeyboardArrowRightIcon />}
-        >
-        Submit
-      </Button>
-      </form>
-
-      </div> 
-
-      <div>
-        <Typography
-        className={classes.title}
-        variant="h6" 
-        color="textSecondary"
-        component="h2"
-        gutterBottom
-      >
-        Create Parties
-      </Typography>
-
-      <form noValidate autoComplete="off" onSubmit={partiesSubmit}>
-        <TextField className={classes.field}
-          onChange={(e) => setPurchaser(e.target.value)}
-          label="Purchaser" 
-          variant="outlined" 
-          color="secondary" 
-          required
-          error={purchaserError}
-        />
-        <TextField className={classes.field}
-          onChange={(e) => setArtist(e.target.value)}
-          label="Artist"
-          variant="outlined"
-          color="secondary"
-          required
-          error={artistError}
-        />
-
-      <Button
-        className={classes.btn}
-        onClick={() => console.log('you clicked me')}
-        type="submit" 
-        color="primary" 
-        variant="contained"
-        endIcon={<KeyboardArrowRightIcon />}
-        >
-        Submit
-      </Button>
-      </form>
-
-      </div>    
-      <div>
-        <Typography
-        className={classes.title}
-        variant="h6" 
-        color="textSecondary"
-        component="h2"
-        gutterBottom
-      >
-        Create a New Offer
-      </Typography>
-
-      <form noValidate autoComplete="off" onSubmit={offerSubmit}>
-        <TextField className={classes.field}
+        </div>
+        <br />
+        <div>
+           <TextField className={classes.field}
           onChange={(e) => setGuarantee(e.target.value)}
-          label="Guarantee" 
+          label="Guarantee(wei)" 
           variant="outlined" 
           color="secondary" 
           required
@@ -296,7 +200,7 @@ export default function Create() {
         />
         <TextField className={classes.field}
           onChange={(e) => setDeposit(e.target.value)}
-          label="Deposit"
+          label="Deposit(wei)"
           variant="outlined"
           color="secondary"
           required
@@ -304,12 +208,15 @@ export default function Create() {
         />
         <TextField className={classes.field}
           onChange={(e) => setDueDate(e.target.value)}
-          label="Due Date"
+          label="Due Date(unix)"
           variant="outlined"
           color="secondary"
           required
           error={dueDateError}
         />
+        </div>
+        <br />
+        <div>
 
       <Button
         className={classes.btn}
@@ -317,14 +224,18 @@ export default function Create() {
         type="submit" 
         color="primary" 
         variant="contained"
+        
+        
         endIcon={<KeyboardArrowRightIcon />}
         >
         Submit
       </Button>
+      </div>
       </form>
 
-      </div>  
+      </div> 
 
+       <br />
       <div>
         <Typography
         className={classes.title}
@@ -345,7 +256,8 @@ export default function Create() {
           required
           error={sendMoneyError}
         />
-
+        <br />
+      <div>
       <Button
         className={classes.btn}
         onClick={() => console.log('you clicked me')}
@@ -356,7 +268,9 @@ export default function Create() {
         >
         Submit
       </Button>
+      </div>
       </form>
+     
 
       </div>  
       

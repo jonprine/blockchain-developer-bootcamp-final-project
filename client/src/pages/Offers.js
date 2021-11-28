@@ -24,21 +24,24 @@ export default function Offers() {
 
   useEffect(() => {
     const init = async () => {
-      const web3 = getWeb3();
+      const web3 = await getWeb3();
       const accounts = await web3.eth.getAccounts();
       const concert = await getConcert(web3);
       setWeb3(web3);
       setAccounts(accounts);
       setConcert(concert);
       let showInfo = await concert.methods.readEvent().call().then();
-      const currentShow = showInfo[0];
+      let currentShow = showInfo[showInfo.length - 1];
       setShows(currentShow);
       let approvedOffer = await concert.methods.getAllOffers().call().then();
-      let currentApprovedOffer = approvedOffer[0];
+      let currentApprovedOffer = approvedOffer[approvedOffer.length - 1];
       setOffers(currentApprovedOffer);
 
     };
     init();
+    window.ethereum.on('accountsChanged', accounts => {
+      setAccounts(accounts);
+    });
   }, []);
 
   if (
@@ -54,11 +57,11 @@ export default function Offers() {
   const handleApprove = async (id) => {
 
    
-    // console.log();
+  
     await concert.methods
-      .approveOffer(0)
-      .send({from: accounts[1], gas: 300000})
-      .then(() => history.push('/'));
+    .approveOffer(id)
+    .send({from: accounts[0], gas: 300000})
+    .then(() => history.push('/'));
   };
 
   return (

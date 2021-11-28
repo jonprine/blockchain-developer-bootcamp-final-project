@@ -28,7 +28,7 @@ export default function Offers() {
 
   useEffect(() => {
     const init = async () => {
-      const web3 = getWeb3();
+      const web3 = await getWeb3();
       const accounts = await web3.eth.getAccounts();
       const concert = await getConcert(web3);
       setWeb3(web3);
@@ -36,16 +36,18 @@ export default function Offers() {
       console.log(accounts);
       setConcert(concert);
       let showInfo = await concert.methods.readEvent().call().then();
-      const currentShow = showInfo[0];
+      let currentShow = showInfo[showInfo.length - 1];
       setShows(currentShow);
       let approvedOffer = await concert.methods.getAllOffers().call().then();
-      let currentApprovedOffer = approvedOffer[0];
-      setOffers(currentApprovedOffer); 
+      let currentApprovedOffer = approvedOffer[approvedOffer.length - 1];
+      setOffers(currentApprovedOffer);  
       let updatedBalance = await concert.methods.getBalance().call().then();
-      console.log(updatedBalance);
       setBalance(updatedBalance);
     };
     init();
+    window.ethereum.on('accountsChanged', accounts => {
+      setAccounts(accounts);
+    });
   }, []);
 
   if (
@@ -62,14 +64,15 @@ export default function Offers() {
   const handleReceive = async (id) => {
     
 
-    let currentOffer = await concert.methods.getSingleOffer(id).call().then();
-    let guarantee = currentOffer[1];
+    let approvedOffer = await concert.methods.getAllOffers().call().then();
+    let currentApprovedOffer = approvedOffer[approvedOffer.length - 1];
+    let guarantee = currentApprovedOffer[1];
     console.log(guarantee);
     
         
       await concert.methods
-      .receiveFullGuarantee(0)
-      .send({from: accounts[1], gas: 300000})
+      .receiveFullGuarantee(id)
+      .send({from: accounts[0], gas: 300000})
       .then(() => history.go(0));
   };
 
