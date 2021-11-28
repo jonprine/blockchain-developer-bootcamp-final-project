@@ -29,7 +29,6 @@ contract Concert is ReentrancyGuard {
   
   address payable public purchaser;
   address payable public artist;
-  bool public confirmedShow;
   bool finalpayment;
   
   mapping(address => uint) public balanceReceived;
