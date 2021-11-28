@@ -68,6 +68,7 @@ export default function Landing() {
          await concert.methods
             .createParties(purchaser, artist)
             .send({from:accounts[0], gas: 3000000 })
+            .then(() => history.push('/create'));
             console.log(purchaser);
             console.log(artist);
         } 

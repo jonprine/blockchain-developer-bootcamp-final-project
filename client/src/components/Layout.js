@@ -39,17 +39,13 @@ export default function Layout({ children }) {
 
   const menuItems = [
     { 
-      text: 'Home', 
+      text: 'New Show', 
       icon: <AddCircleOutlined color="primary" />, 
-      path: '/' 
+      path: '/landing' 
     },
+
     { 
-      text: 'Offers', 
-      icon: <SubjectOutlined color="primary" />, 
-      path: '/offers' 
-    },
-    { 
-      text: 'Create Show', 
+      text: 'Create Offer', 
       icon: <AddCircleOutlined color="primary" />, 
       path: '/create' 
     },

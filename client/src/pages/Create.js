@@ -132,6 +132,7 @@ export default function Create() {
          await concert.methods
             .sendMoney()
             .send({ from: accounts[0], gas: 3000000, value: web3.utils.toWei('1', 'ether') })
+            .then(() => history.go(0));
             
             
         } 
@@ -142,6 +143,46 @@ export default function Create() {
 
   return (
     <Container className={classes.boxes}>
+
+<br />
+      <div>
+        <Typography
+        className={classes.title}
+        variant="h6" 
+        color="textSecondary"
+        component="h2"
+        gutterBottom
+      >
+        Fund the show
+      </Typography>
+
+      <form noValidate autoComplete="off" onSubmit={sendMoneySubmit}>
+        <TextField className={classes.field}
+          onChange={(e) => setSendMoney(e.target.value)}
+          label="Send Money" 
+          variant="outlined" 
+          color="secondary" 
+          required
+          error={sendMoneyError}
+        />
+        <br />
+      <div>
+      <Button
+        className={classes.btn}
+        onClick={() => console.log('you clicked me')}
+        type="submit" 
+        color="primary" 
+        variant="contained"
+        endIcon={<KeyboardArrowRightIcon />}
+        >
+        Submit
+      </Button>
+      </div>
+      </form>
+     
+
+      </div>  
+      
         <div>
         <Typography
         className={classes.title}
@@ -150,7 +191,7 @@ export default function Create() {
         component="h2"
         gutterBottom
       >
-        Create a New Event
+        Create a New Offer
       </Typography>
 
       <form noValidate autoComplete="off" onSubmit={eventSubmit}>
@@ -235,44 +276,7 @@ export default function Create() {
 
       </div> 
 
-       <br />
-      <div>
-        <Typography
-        className={classes.title}
-        variant="h6" 
-        color="textSecondary"
-        component="h2"
-        gutterBottom
-      >
-        Fund the show
-      </Typography>
 
-      <form noValidate autoComplete="off" onSubmit={sendMoneySubmit}>
-        <TextField className={classes.field}
-          onChange={(e) => setSendMoney(e.target.value)}
-          label="Send Money" 
-          variant="outlined" 
-          color="secondary" 
-          required
-          error={sendMoneyError}
-        />
-        <br />
-      <div>
-      <Button
-        className={classes.btn}
-        onClick={() => console.log('you clicked me')}
-        type="submit" 
-        color="primary" 
-        variant="contained"
-        endIcon={<KeyboardArrowRightIcon />}
-        >
-        Submit
-      </Button>
-      </div>
-      </form>
-     
-
-      </div>  
       
         
     </Container>

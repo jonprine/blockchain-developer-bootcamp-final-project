@@ -119,7 +119,6 @@ contract Concert is ReentrancyGuard {
         
     }
     
-    
     function withdraw() public onlyPurchaser {
         require(finalpayment == true, "You must complete payment");
         purchaser.transfer(address(this).balance);
