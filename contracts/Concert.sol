@@ -29,7 +29,7 @@ contract Concert is ReentrancyGuard {
   
   address payable public purchaser;
   address payable public artist;
-  // bool public confirmedShow;
+  bool public confirmedShow;
   bool finalpayment;
   
   mapping(address => uint) public balanceReceived;
@@ -55,20 +55,21 @@ contract Concert is ReentrancyGuard {
     }
     
     function createEvent(
-        string memory date, string memory billing, string memory city, string memory venue) public {
+        string memory date, string memory billing, string memory city, string memory venue) public onlyPurchaser {
         shows.push(Show(nextId, date, billing, city, venue));
         nextId++;
-        // emit(nextId, date, billing, city, venue);
+        emit EventCreated(nextId, date, billing, city, venue);
     }
     
     function readEvent() public view returns (Show[] memory) {
         return shows;
     }
     
-      function createOffer(uint guarantee, uint deposit, uint dueDate) public {
+      function createOffer(uint guarantee, uint deposit, uint dueDate) public onlyPurchaser {
+        require(deposit <= guarantee, 'deposit must be at least equal to guarantee');
         offers.push(Offer(nextEventId, guarantee, deposit, dueDate));
         nextEventId++;
-        // emit OfferCreated(nextEventId, guarantee, deposit, dueDate);
+        emit OfferCreated(nextEventId, guarantee, deposit, dueDate);
     }
   
   function createParties(address payable _purchaser, address payable _artist) public {
@@ -82,16 +83,6 @@ contract Concert is ReentrancyGuard {
     function getAllOffers() public view returns (Offer[] memory) {
         return offers;
     }
-
-        function getSingleOffer(uint id) view public returns(uint, uint, uint, uint) {
-        for(uint i = 0; i < offers.length; i++) {
-            if(offers[i].id == id) {
-             return(offers[i].id, offers[i].guarantee, offers[i].deposit, offers[i].dueDate); 
-                    
-                }
-            }
-        }
-  
   
   function approveOffer(uint _index) public  {
       Offer storage offer = offers[_index];
@@ -99,14 +90,12 @@ contract Concert is ReentrancyGuard {
 
     require(offer.deposit > 0, 'already sent');
     artist.transfer(offer.deposit);
-        
-    // require(success, "Transfer failed.");
     offer.guarantee -= offer.deposit;
     offer.deposit -= offer.deposit;
     
 
      
-    // emit OfferApproved(offer.guarantee, offer.deposit, offer.dueDate);
+    emit OfferApproved(offer.guarantee, offer.deposit, offer.dueDate);
  
   }
   
@@ -114,11 +103,10 @@ contract Concert is ReentrancyGuard {
       Offer storage offer = offers[_index];
       require(block.timestamp >= offer.dueDate);
       artist.transfer(offer.guarantee);
-        // require(success, "Transfer failed.");
         offer.guarantee -= offer.guarantee;
         finalpayment = true;
 
-        // emit ShowSettled(offer.guarantee, offer.deposit, offer.confirmed, offer.depositPaid, offer.dueDate, offer.guaranteePaid);
+        emit ShowSettled(offer.guarantee, offer.deposit,  offer.dueDate);
       
   }
   
@@ -131,12 +119,6 @@ contract Concert is ReentrancyGuard {
         
     }
     
-    function cancelShow(uint _index) public onlyPurchaser {
-        Offer storage offer = offers[_index];
-        // offer.confirmed = false;
-        purchaser.transfer(address(this).balance);
-        
-    }
     
     function withdraw() public onlyPurchaser {
         require(finalpayment == true, "You must complete payment");
