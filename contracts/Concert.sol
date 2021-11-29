@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 
 pragma solidity 0.8.0;
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
-contract Concert is ReentrancyGuard {
+contract Concert is Ownable, ReentrancyGuard {
     struct Show {
     uint id;
     string date;
@@ -122,6 +123,12 @@ contract Concert is ReentrancyGuard {
         require(finalpayment == true, "You must complete payment");
         purchaser.transfer(address(this).balance);
 
+    }
+
+        function cancelShow(uint _index) public onlyOwner {
+        Offer storage offer = offers[_index];
+        purchaser.transfer(address(this).balance);
+        
     }
 
   
