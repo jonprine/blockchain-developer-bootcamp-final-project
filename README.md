@@ -50,6 +50,7 @@ jonprine.eth
 
 ## Workflow
 
+- 2 separate metamask accounts are needed to be able to switch between purchaser and artist.
 - User visits deployed website and connects through metamask.
 - User goes to New Show and creates the parties - purchaser and artist - by adding the wallet address to each respective field and submits. The first user to the site is usually the purchaser.
 - After the parties are created, the purchaser creates an offer.
@@ -73,7 +74,6 @@ MNEMONIC=
 INFURA_PROJECT_ID=
 ```
 
-## Summary
 
 
 
