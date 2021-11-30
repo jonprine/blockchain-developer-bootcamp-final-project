@@ -56,10 +56,6 @@ jonprine.eth
 - Once the show is settled the state should reflect that the guarantee balance is 0.
 - After the show has been settled the purchaser is able to withdraw any remaining funds in the contract.
 
-## Environment Variables
-MNEMONIC=
-INFURA_PROJECT_ID=
-
 ## Summary
 
 
