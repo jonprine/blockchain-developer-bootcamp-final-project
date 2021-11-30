@@ -1,18 +1,22 @@
 # Final Project - dyob (do your own band)
 
 ## Project Description
+
 dyob is a decentralized booking agreement between 2 parties - purchaser and artist. More so decentralizing the administrative process after negotiating a performance between the two parties. Once an offer is negotiated, an offer is sent from the purchaser to artist on chain.  The purchaser creates a new show which begins with submitting the wallet address of each party.  The purchaser sends an amount of ether in wei over to the contract to sit in escrow.  The general show details are submitted - Date, Billing, Venue, City, along with the formal offer which includes price(guarantee), deposit, and due date for final payment.  After general details and deal terms are laid out, the offer is sent over for approval from the artist.  Upon confirmation from the artist on the deal terms, the deposit is immediately sent over to the artist wallet.  After the show date has been played, the artist is able to receive the remainder of the guarantee that is left in escrow.  Any funds left over can be withdrawn by the purchaser.
 
 ### Deployed version
+
 https://jonprine.github.io/blockchain-developer-bootcamp-final-project/
 
 ### Screencast
 
 
 ### Public ethereum account
+
 jonprine.eth
 
 ## Directory Structure
+
 - `client`: Contains the project's frontend.
 - `contracts`: Contains the smart contracts
 - `migrations`: Contains the migration files for deploying the contracts.
@@ -21,25 +25,31 @@ jonprine.eth
 ## How to run dyob locally
 
 ### Prerequisites
+
 - Node.js
 - Truffle
 - Ganache
 
 ### Install
+
 - git clone repository
 - in root, `npm install`
 - `cd client` `npm install`
 
 ### Contracts and Testing
+
 - Open up Ganache to run in port `8545`
 - In root directory - `truffle migrate --network development`
 - In Truffle console: `test`
 - There should be 10 tests that pass.
 
 ### Frontend
+
 - `cd client` `npm run start`
+- open http://localhost:3000/
 
 ## Workflow
+
 - User visits deployed website and connects through metamask.
 - User goes to New Show and creates the parties - purchaser and artist - by adding the wallet address to each respective field and submits. The first user to the site is usually the purchaser.
 - After the parties are created, the purchaser creates an offer.
@@ -55,6 +65,13 @@ jonprine.eth
 - Once the performance is complete (and again the dueDate should be set to CURRENT unix epoch time) the artist will click on 'Settle the show'.
 - Once the show is settled the state should reflect that the guarantee balance is 0.
 - After the show has been settled the purchaser is able to withdraw any remaining funds in the contract.
+
+## Environment Variables
+
+```
+MNEMONIC=
+INFURA_PROJECT_ID=
+```
 
 ## Summary
 
