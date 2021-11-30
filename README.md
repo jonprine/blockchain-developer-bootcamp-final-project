@@ -39,8 +39,8 @@ jonprine.eth
 ### Contracts and Testing
 
 - Open up Ganache to run in port `8545`
-- In root directory - `truffle migrate --network development`
-- In Truffle console: `test`
+- In root directory run `truffle migrate --network development`
+- Run `truffle test`
 - There should be 10 tests that pass.
 
 ### Frontend
@@ -50,22 +50,33 @@ jonprine.eth
 
 ## Workflow
 
-- 2 separate metamask accounts are needed to be able to switch between purchaser and artist.
+Before beginning the walkthrough of the app please read notes below:
+
+1. 2 separate funded metamask accounts are required to be able to switch between purchaser and artist.
+2. IMPORTANT: The smart contract is setup for only 1 show agreement.  It has the ability to add additional events / offers but if you create an entirely new show with a new purhcaser and artist, you need to run `truffle migrate --reset` prior to implementing the new information.
+3. I state a few times below as well but when prompted to enter the dueDate please make sure to use the current unix epoch time.
+
 - User visits deployed website and connects through metamask.
 - User goes to New Show and creates the parties - purchaser and artist - by adding the wallet address to each respective field and submits. The first user to the site is usually the purchaser.
 - After the parties are created, the purchaser creates an offer.
-- The purchaser needs to send money (in wei) to the contract to fund the show.  The amount should be higher than what the purchaser is going to offer the artist to help cover gas costs.
+- The purchaser needs to send money (in wei) to the contract to fund the show.  The amount should be higher than what the purchaser is going to offer the artist to help cover gas costs.  Add the amount and 'Send Funds'.
 - After the contract is funded, the purchaser begins the process of creating the offer.
-- The date of show (a string), how the artist should be billed (a string), city where the event takes place (a string), and venue where the show will be held (a string).
-- The guarantee (amount in which artist is being offered) should be in wei.
-- The deposit (in wei) will be the amount subtracted from the guarantee and sent to the artist once the show is confirmed.
-    https://eth-converter.com/
-- The due date should be in unix time. This is the date / time in which the final payment will be paid. It should coorrelate to the date of show and when performance will be complete.  Due to contraints in testing the app, USE THE CURRENT Unix epoch time.  https://www.epochconverter.com/
-- Under the artist account - the artist will be able to confirm the show by clicking on 'Confirm Show'. Upon confirmation the deposit is sent immediately to the account.
-- The current screen will show the current state of the show, with the deposit balance at 0, and guarantee updated to reflect the price less the deposit.
+- Make sure you are using the account set up for purchaser.
+- Purchaser fills out this info:
+    - The date of show (a string), how the artist should be billed (a string), city where the event takes place (a string), and venue where the show will be held (a string).
+    - The guarantee (amount in which artist is being offered) should be in wei.
+    - The deposit (in wei) will be the amount subtracted from the guarantee and sent to the artist once the show is confirmed.
+    - Helpful link for eth to wei conversion: https://eth-converter.com/
+    - The due date should be in unix time. This is the date / time in which the final payment will be paid. In a normal circumstance, it should correlate to the date of show and when performance will be complete.  Due to contraints in testing the app, USE THE CURRENT Unix epoch time. Use this link to find the current unix epoch time: https://www.epochconverter.com/
+- Once all the information pertaining to the offer is implemented, the artist is ready to start confirming the show.
+- Switch to the account set up for artist. 
+- The artist will be able to confirm the show by clicking on 'Confirm Show'. Upon confirmation the deposit is sent immediately to the artist account.
+- The next screen will show the current state of the show, with the deposit balance at 0, and guarantee updated to reflect the price less the deposit.
 - Once the performance is complete (and again the dueDate should be set to CURRENT unix epoch time) the artist will click on 'Settle the show'.
 - Once the show is settled the state should reflect that the guarantee balance is 0.
 - After the show has been settled the purchaser is able to withdraw any remaining funds in the contract.
+- Switch back to the promoter account.
+- Click 'Withdraw' and the remaining funds in the contract will be sent back to the purchaser.
 
 ## Environment Variables
 
