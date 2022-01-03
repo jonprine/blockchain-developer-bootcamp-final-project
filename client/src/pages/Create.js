@@ -243,7 +243,7 @@ export default function Create() {
         <div>
            <TextField className={classes.field}
           onChange={(e) => setGuarantee(e.target.value)}
-          label="Guarantee(wei)" 
+          label="Guarantee(eth)" 
           variant="outlined" 
           color="secondary" 
           required
@@ -251,7 +251,7 @@ export default function Create() {
         />
         <TextField className={classes.field}
           onChange={(e) => setDeposit(e.target.value)}
-          label="Deposit(wei)"
+          label="Deposit(eth)"
           variant="outlined"
           color="secondary"
           required
