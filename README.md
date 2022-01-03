@@ -10,7 +10,7 @@ https://jonprine.github.io/blockchain-developer-bootcamp-final-project/
 Use Ropsten network
 
 ### Screencast
-https://www.loom.com/share/593f0df8355946de8c375667d360990e
+https://www.loom.com/share/46e0615b191e49beaefe0ba551e8fb60
 
 ### Public ethereum account
 
@@ -61,14 +61,13 @@ Before beginning the walkthrough of the app please read notes below:
 - User visits deployed website and connects through metamask.
 - User goes to New Show and creates the parties - purchaser and artist - by adding the wallet address to each respective field and submits. 
 - After the parties are created, the purchaser creates an offer.
-- The purchaser needs to send money (in wei) to the contract to fund the show. Make sure you are under the purchaser account. The amount should be higher than what the purchaser is going to offer the artist to help cover gas costs.  Add the amount and 'Send Funds'.
+- The purchaser needs to send money (in eth) to the contract to fund the show. Make sure you are under the purchaser account. The amount should be higher than what the purchaser is going to offer the artist to help cover gas costs.  Add the amount and 'Send Funds'.
 - After the contract is funded, the purchaser begins the process of creating the offer.
 - Make sure you are using the account set up for purchaser.
 - Purchaser fills out this info:
     - The date of show (a string), how the artist should be billed (a string), city where the event takes place (a string), and venue where the show will be held (a string).
-    - The guarantee (amount in which artist is being offered) should be in wei.
-    - The deposit (in wei) will be the amount subtracted from the guarantee and sent to the artist once the show is confirmed.
-    - Helpful link for eth to wei conversion: https://eth-converter.com/
+    - The guarantee (amount in which artist is being offered) should be in eth.
+    - The deposit (in eth) will be the amount subtracted from the guarantee and sent to the artist once the show is confirmed.
     - The due date should be in unix time. This is the date / time in which the final payment will be made. In a normal circumstance, it should correlate to the date of show and when performance will be complete.  Due to contraints in testing the app, USE THE CURRENT Unix epoch time. Use this link to find the current unix epoch time: https://www.epochconverter.com/
 - Once all the information pertaining to the offer is implemented, the artist is ready to start confirming the show.
 - Switch to the account set up for artist. 

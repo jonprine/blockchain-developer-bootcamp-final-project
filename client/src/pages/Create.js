@@ -169,7 +169,7 @@ export default function Create() {
       <form noValidate autoComplete="off" onSubmit={sendMoneySubmit}>
         <TextField className={classes.field}
           onChange={(e) => setSendMoney(e.target.value)}
-          label="Send Money(wei)" 
+          label="Send Money(eth)" 
           variant="outlined" 
           color="secondary" 
           required
