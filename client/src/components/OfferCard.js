@@ -3,6 +3,7 @@ import { Card, CardContent, IconButton, Typography } from "@mui/material";
 import { ThumbUpAlt } from "@mui/icons-material";
 
 export default function OfferCard({ offer, handleApprove }) {
+
   return (
     <div>
       <Card elevation={1} >

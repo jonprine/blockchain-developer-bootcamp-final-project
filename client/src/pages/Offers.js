@@ -37,6 +37,7 @@ export default function Offers() {
       let currentApprovedOffer = approvedOffer[approvedOffer.length - 1];
       setOffers(currentApprovedOffer);
 
+
     };
     init();
     window.ethereum.on('accountsChanged', accounts => {

@@ -106,14 +106,20 @@ export default function Create() {
         }
         if (date && billing && city && venue && guarantee && deposit && dueDate) {
 
-          web3.utils.toBN(guarantee);
-          web3.utils.toBN(deposit);
+          // web3.utils.toBN(guarantee);
+          // web3.utils.toBN(deposit);
+
+          guarantee.toString();
+          deposit.toString();
+
+          const ethGuarantee = web3.utils.toWei(guarantee, 'ether');
+          const ethDeposit = web3.utils.toWei(deposit, 'ether');
 
           await concert.methods
           .createEvent(date, billing, city, venue)
           .send({ from: accounts[0], gas: 3000000 });
           await concert.methods
-          .createOffer(guarantee.toString(), deposit.toString(), dueDate)
+          .createOffer(ethGuarantee, ethDeposit, dueDate)
           .send({ from: accounts[0], gas: 3000000 })
           .then(() => history.push("/offers"));
         } 
@@ -129,9 +135,13 @@ export default function Create() {
           setSendMoneyError(true)
         }
         if (sendMoney) {
+
+          sendMoney.toString();
+          const ethSendMoney = web3.utils.toWei(sendMoney, 'ether');
+
          await concert.methods
             .sendMoney()
-            .send({ from: accounts[0], gas: 3000000, value: sendMoney })
+            .send({ from: accounts[0], gas: 3000000, value: ethSendMoney })
             .then(() => history.go(0));
             
             
